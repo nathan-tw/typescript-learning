@@ -1,4 +1,4 @@
-import axios, {AxiosResponse} from 'axios';
+import axios, { AxiosResponse } from "axios";
 
 interface UserProps {
   id?: number;
@@ -6,10 +6,8 @@ interface UserProps {
   age?: number;
 }
 
-type Callback = () => void;
 
 export class User {
-  events: { [key: string]: Callback[] } = {};
 
   constructor(private data: UserProps) {}
 
@@ -21,29 +19,24 @@ export class User {
     Object.assign(this.data, update);
   }
 
-  on(eventName: string, callback: Callback) {
-    const handlers = this.events[eventName] || [];
-    handlers.push(callback);
-    this.events[eventName] = handlers;
+
+
+  fetch(): void {
+    axios
+      .get(`http://localhost:3000/users/${this.get("id")}`)
+      .then((response: AxiosResponse): void => {
+        this.set(response.data);
+      });
   }
 
-  trigger(eventName: string): void {
-    const handlers = this.events[eventName];
+  save(): void {
+    const id = this.get("id");
 
-    if (!handlers || handlers.length === 0) {
-      return;
+    if (id) {
+      //put
+      axios.put(`http://localhost:3000/users/${id}`, this.data);
+    } else {
+      axios.post("http://localhost/users", this.data);
     }
-
-    handlers.forEach((callback) => {
-      callback();
-    });
-  }
-  
-
-  fetch(): void{
-    axios.get(`http://localhost:3000/users/${this.get('id')}`)
-    .then((response: AxiosResponse): void => {
-      this.set(response.data);
-    });
   }
 }
