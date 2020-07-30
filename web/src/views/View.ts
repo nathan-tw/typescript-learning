@@ -47,6 +47,8 @@ export abstract class View<T extends Model<K>, K>{
     }
   }
 
+  onRender(): void{}
+
   render(): void {
     // though this is no a efficient way like angular and react
     // they compare the new and old DOM and re-render it
@@ -58,6 +60,9 @@ export abstract class View<T extends Model<K>, K>{
 
     this.bindEvents(templateElement.content);
     this.mapRegions(templateElement.content);
+
+
+    this.onRender();
 
     this.parent.append(templateElement.content);
   }
